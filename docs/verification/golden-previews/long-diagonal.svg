@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 184 84" width="180.0000mm" height="80.0000mm">
+  <g id="outline" fill="none" stroke="#161711"><path d="M0.0000 25.0000 L25.0000 0.0000 L180.0000 55.0000 L155.0000 80.0000 Z" /></g>
+  <g id="pockets" fill="none" stroke="#161711">
+  <path id="cell-001" d="M66.8289 21.2089 L61.7162 40.5327 L10.9619 22.5231 L26.5637 6.9213 Z" />
+  <path id="cell-002" d="M169.0379 57.4767 L153.4361 73.0785 L126.4169 63.4910 L132.7975 44.6172 Z" />
+  <path id="cell-003" d="M129.0273 43.2794 L122.6467 62.1532 L65.4988 41.8749 L70.6114 22.5511 Z" />
+  </g>
+</svg>
