@@ -80,4 +80,25 @@ describe("verifyExportedDxf", () => {
 
     expect(verifyExportedDxf(text, result).reason).toBe("EXPORT_ROUNDTRIP_OVERLAP_DETECTED");
   });
+
+  it("accepts a DXF vertex that differs from a usable-domain endpoint only by floating-point ulps", () => {
+    const original = success();
+    const pocketRing = [{ x: 31.2764, y: 100 }, { x: 50, y: 94 }, { x: 50, y: 106 }];
+    const result = {
+      ...original,
+      parameters: { ...original.parameters, minPocketAreaMm2: 1, maxPocketAreaMm2: 1_000 },
+      usableDomain: {
+        outer: [
+          { x: 31.276400000000002, y: 100 },
+          { x: 60.6372, y: 88.3567 },
+          { x: 60.6372, y: 111.64330000000001 },
+        ],
+        holes: [],
+      },
+      pockets: [{ ...original.pockets[0]!, polygon: { outer: pocketRing, holes: [] }, areaMm2: 112.3416 }],
+    };
+    const text = exportDxf({ outline: result.outline.outer, pockets: [{ id: result.pockets[0]!.id, points: pocketRing }] });
+
+    expect(verifyExportedDxf(text, result)).toEqual({ ok: true });
+  });
 });

@@ -9,6 +9,7 @@ const readFixture = (path: string): string => readFileSync(fileURLToPath(new URL
 describe("fixture corpus", () => {
   it("keeps the supported SVG fixture free of active content", () => {
     expect(readFixture("./svg/rectangle-mm.svg")).not.toMatch(/<script|\son[a-z]+=/i);
+    expect(readFixture("./svg/sharp-concave-mm.svg")).not.toMatch(/<script|\son[a-z]+=/i);
   });
 
   it("keeps an explicit active-content rejection fixture", () => {

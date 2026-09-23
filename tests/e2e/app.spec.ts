@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 const rectangleSvg = fileURLToPath(new URL("../fixtures/svg/rectangle-mm.svg", import.meta.url));
+const sharpConcaveSvg = fileURLToPath(new URL("../fixtures/svg/sharp-concave-mm.svg", import.meta.url));
 const rectangleDxf = fileURLToPath(new URL("../fixtures/dxf/rectangle-mm.dxf", import.meta.url));
 const knownGoodSvg = fileURLToPath(new URL("../../examples/known-good-rectangle.svg", import.meta.url));
 const vectorExampleSvg = fileURLToPath(new URL("../../examples/Vector 1.svg", import.meta.url));
@@ -100,6 +101,30 @@ test("generates the documented three-pocket known-good SVG", async ({ page }) =>
   console.info(`KNOWN_GOOD_AREAS ${JSON.stringify(areas)}`);
   expect(areas).toHaveLength(3);
   expect(areas.every((area) => area >= 300 && area <= 5_000)).toBe(true);
+});
+
+test("partitions and exports a sharply concave uploaded SVG", async ({ page }) => {
+  await page.goto("/");
+  await page.locator('input[type="file"]').setInputFiles(sharpConcaveSvg);
+  await expect(page.getByText("sharp-concave-mm.svg").first()).toBeVisible();
+  await page.getByLabel("포켓 수").fill("3");
+  await page.getByLabel("최소 면적").fill("300");
+  await page.getByLabel("최대 면적").fill("5000");
+  await page.getByLabel("품질").selectOption("extended");
+  await page.getByLabel("재현 시드").fill("formfield-01");
+
+  await page.getByRole("button", { name: /포켓 생성/ }).click();
+
+  await expect(page.getByText("VALIDATED")).toBeVisible({ timeout: 15_000 });
+  await expect(page.locator(".drawing .pocket")).toHaveCount(3);
+  await expect(page.getByRole("button", { name: /DXF 내려받기/ })).toBeEnabled();
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: /DXF 내려받기/ }).click();
+  const download = await downloadPromise;
+  const downloadPath = await download.path();
+  const dxf = await readFile(downloadPath!, "utf8");
+  expect(independentlyParsePolylines(dxf).filter((polyline) => polyline.layer === "POCKET")).toHaveLength(3);
 });
 
 test("generates six validated pockets from the unitless Vector 1.svg example", async ({ page }) => {

@@ -111,4 +111,22 @@ describe("PocketGeometryService with ClipperTsKernel", () => {
 
     expect(quantizedService.isContainedWithin(quantizedPocket, domains.usableDomain)).toBe(true);
   });
+
+  it("preserves configured coordinate precision during union", () => {
+    const precise = {
+      outer: [
+        { x: 0.1234, y: 0.5678 },
+        { x: 10.9876, y: 0.5678 },
+        { x: 10.9876, y: 8.4321 },
+        { x: 0.1234, y: 8.4321 },
+      ],
+      holes: [],
+    };
+
+    const result = polygonsOf(kernel.union([precise]));
+
+    expect(result).toHaveLength(1);
+    expect(result[0]!.outer.some((point) => Math.abs(point.x - 0.1234) < 1e-9 && Math.abs(point.y - 0.5678) < 1e-9)).toBe(true);
+    expect(result[0]!.outer.some((point) => Math.abs(point.x - 10.9876) < 1e-9 && Math.abs(point.y - 8.4321) < 1e-9)).toBe(true);
+  });
 });

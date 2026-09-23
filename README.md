@@ -128,6 +128,8 @@ m >= g / 2
 
 `examples/`에는 실제 브라우저 E2E 테스트로 검증한 입력이 포함되어 있습니다.
 
+`01-soft-rectangle.svg`부터 `20-starburst.svg`까지는 볼록형, 곡선형, 비대칭형, 오목형, 급각형을 망라하는 `240 × 160 mm` 테스트 코퍼스입니다. 각 파일은 Chromium에서 업로드, 3개 공간 분할, 검증 완료, DXF/SVG 내보내기 활성화까지 자동 검사합니다.
+
 ### `known-good-rectangle.svg`
 
 | 항목 | 값 |
@@ -671,6 +673,10 @@ UI는 기하 계산의 권위 소스가 아닙니다. 최적화 Worker가 반환
 
 자세한 결정 기록은 [`docs/adr/ADR-002-containment-before-anisotropy.md`](docs/adr/ADR-002-containment-before-anisotropy.md)를 참고하세요.
 
+### 작업 기록과 새 세션 인계
+
+새 개발 세션은 [`AGENTS.md`](AGENTS.md), [`docs/HANDOFF.md`](docs/HANDOFF.md), 최신 [`docs/worklog/`](docs/worklog/) 기록, 관련 ADR 순서로 읽습니다. `.omx/`는 로컬 런타임 상태와 원시 JSONL 로그이므로 Git에 보존하지 않고, 재사용할 결정·변경·검증 결과만 Markdown 작업 기록으로 정리합니다.
+
 ## 테스트와 검증
 
 ### 검증 명령
@@ -715,13 +721,13 @@ npm run benchmark
 
 현재 기준으로 다음 검증을 통과했습니다.
 
-- Vitest: `22`개 test file, `149/149` 테스트 통과
-- Chromium Playwright: `11/11` 테스트 통과
+- Vitest: `23`개 test file, `161/161` 테스트 통과
+- Chromium Playwright: `32/32` 테스트 통과
 - ESLint 통과
 - TypeScript typecheck 통과
 - Vite production build 통과
 
-특히 `Vector 1.svg`와 `Ellipse 1.svg`는 실제 브라우저에서 업로드, 단위 적용, 6개 포켓 생성, `VALIDATED`, DXF/SVG 다운로드 활성화까지 테스트합니다.
+특히 `Vector 1.svg`, `Ellipse 1.svg`, 급격한 V자 오목 외곽 fixture와 20개 외곽선 코퍼스는 실제 브라우저에서 업로드, 공간 분할, `VALIDATED`, DXF/SVG 다운로드 활성화까지 테스트합니다.
 
 ## 현재 범위와 한계
 

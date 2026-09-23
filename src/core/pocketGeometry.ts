@@ -49,7 +49,18 @@ export class PocketGeometryService {
 
   roundInset(raw: Polygonal, domains: PocketDomains): PocketBuildResult {
     const rawAreaMm2 = totalArea(raw);
-    const geometry = this.kernel.offset(raw, -domains.radiusMm, { arcToleranceMm: domains.arcToleranceMm });
+    const inset = this.kernel.offset(raw, -domains.radiusMm, { arcToleranceMm: domains.arcToleranceMm });
+    // Offset composition is not exact around acute and reflex corners:
+    // offset(offset(P, -(m-r)), -r) can protrude a few coordinate quanta beyond
+    // offset(P, -m). Intersecting the manufactured pocket with the canonical
+    // usable domain makes Q_i ⊆ U true by construction instead of relying on an
+    // area tolerance that the independent DXF verifier cannot safely mirror.
+    const clippedPieces = polygonsOf(inset).flatMap((piece) => polygonsOf(this.kernel.intersect(piece, domains.usableDomain)));
+    const geometry: Polygonal | null = clippedPieces.length === 0
+      ? null
+      : clippedPieces.length === 1
+        ? clippedPieces[0]!
+        : { polygons: clippedPieces };
     const pieces = polygonsOf(geometry);
     const finalAreaMm2 = totalArea(geometry);
     const common = {

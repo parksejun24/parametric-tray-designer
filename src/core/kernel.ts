@@ -101,7 +101,10 @@ export class ClipperTsKernel implements GeometryKernel {
 
   union(polygons: readonly Polygon[]): Polygonal | null {
     if (polygons.length === 0) return null;
-    return fromPaths(unionD(polygons.flatMap(pathsOf), FillRule.NonZero));
+    // The two-argument unionD overload hard-codes Clipper's default precision
+    // of 2 decimal places. Use the explicit overload so every boolean operation
+    // honors this kernel's coordinate precision contract.
+    return fromPaths(unionD(polygons.flatMap(pathsOf), [], FillRule.NonZero, this.precision));
   }
 }
 

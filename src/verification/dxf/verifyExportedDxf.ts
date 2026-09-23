@@ -37,9 +37,17 @@ function pointOnSegment(point: Vec2, a: Vec2, b: Vec2, tolerance = 1e-8): boolea
   const dy = b.y - a.y;
   const lengthSquared = dx * dx + dy * dy;
   if (lengthSquared <= tolerance * tolerance) return Math.hypot(point.x - a.x, point.y - a.y) <= tolerance;
+  // At acute offset corners the same quantized vertex may differ by a few
+  // floating-point ulps after DXF parsing. Accept endpoints directly before
+  // using a projection whose round-off can place them infinitesimally outside
+  // [0, 1].
+  if (Math.hypot(point.x - a.x, point.y - a.y) <= tolerance
+    || Math.hypot(point.x - b.x, point.y - b.y) <= tolerance) return true;
   const projection = ((point.x - a.x) * dx + (point.y - a.y) * dy) / lengthSquared;
-  if (projection < 0 || projection > 1) return false;
-  const nearest = { x: a.x + projection * dx, y: a.y + projection * dy };
+  const projectionTolerance = tolerance / Math.sqrt(lengthSquared);
+  if (projection < -projectionTolerance || projection > 1 + projectionTolerance) return false;
+  const clamped = Math.max(0, Math.min(1, projection));
+  const nearest = { x: a.x + clamped * dx, y: a.y + clamped * dy };
   return Math.hypot(point.x - nearest.x, point.y - nearest.y) <= tolerance;
 }
 
