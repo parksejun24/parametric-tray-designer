@@ -17,8 +17,23 @@
 
 > 이 프로그램은 독창적인 공간 분할을 보조하는 설계 도구이며, 디자인권이나 지식재산권 비침해 여부를 자동으로 판단하지 않습니다.
 
+## 시연 및 Fusion 활용 예시
+
+외곽선을 불러와 포켓을 생성하고 DXF로 내보내는 전체 과정은 아래 영상에서 확인할 수 있습니다.
+
+**[▶ Formfield 시연 영상 보기 (MOV, 약 50초)](examples/formfield-workflow-demo.mov)**
+
+Formfield에서 생성한 2D 포켓 레이아웃입니다.
+
+![Formfield에서 생성한 6개 포켓 레이아웃](examples/formfield-layout-preview.png)
+
+내보낸 도면을 Fusion 스케치로 가져와 바로 3D 모델링한 트레이 예시입니다.
+
+![Formfield 도면을 사용해 Fusion에서 모델링한 트레이](examples/fusion-tray-model.png)
+
 ## 목차
 
+- [시연 및 Fusion 활용 예시](#시연-및-fusion-활용-예시)
 - [프로젝트 목표](#프로젝트-목표)
 - [주요 기능](#주요-기능)
 - [빠른 시작](#빠른-시작)
